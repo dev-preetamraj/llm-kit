@@ -6,8 +6,8 @@ from typing import Any, Dict, List
 from pydantic import BaseModel
 
 from llm_kit.core.inputs import LLMFile
-from llm_kit.providers.gemini.client import GeminiClient
-from llm_kit.providers.gemini.config import GeminiConfig
+from llm_kit.providers.bedrock.client import BedrockClient
+from llm_kit.providers.bedrock.config import BedrockConfig
 from llm_kit.settings import settings
 
 
@@ -36,7 +36,7 @@ class TestStrategy(ABC):
         pass
 
     @abstractmethod
-    async def execute(self, client: GeminiClient) -> Any:
+    async def execute(self, client: BedrockClient) -> Any:
         """Execute the test strategy."""
         pass
 
@@ -47,7 +47,7 @@ class GenerateTextWithoutFileStrategy(TestStrategy):
     def get_name(self) -> str:
         return "generate_text without file"
 
-    async def execute(self, client: GeminiClient) -> str:
+    async def execute(self, client: BedrockClient) -> str:
         return await client.generate_text("Say hello in one sentence")
 
 
@@ -57,7 +57,7 @@ class GenerateTextWithFileStrategy(TestStrategy):
     def get_name(self) -> str:
         return "generate_text with file"
 
-    async def execute(self, client: GeminiClient) -> str:
+    async def execute(self, client: BedrockClient) -> str:
         bill_path = Path(__file__).parent.parent / "bill.pdf"
         with open(bill_path, "rb") as f:
             bill_content = f.read()
@@ -79,7 +79,7 @@ class GenerateJsonWithoutFileStrategy(TestStrategy):
     def get_name(self) -> str:
         return "generate_json without file"
 
-    async def execute(self, client: GeminiClient) -> Dict[str, Any]:
+    async def execute(self, client: BedrockClient) -> Dict[str, Any]:
         schema = GreetingSchema.model_json_schema()
         return await client.generate_json(
             "Generate a greeting in Spanish",
@@ -93,7 +93,7 @@ class GenerateJsonWithFileStrategy(TestStrategy):
     def get_name(self) -> str:
         return "generate_json with file"
 
-    async def execute(self, client: GeminiClient) -> Dict[str, Any]:
+    async def execute(self, client: BedrockClient) -> Dict[str, Any]:
         bill_path = Path(__file__).parent.parent / "bill.pdf"
         with open(bill_path, "rb") as f:
             bill_content = f.read()
@@ -114,7 +114,7 @@ class GenerateJsonWithFileStrategy(TestStrategy):
 class StrategyRunner:
     """Runs test strategies against a client."""
 
-    def __init__(self, client: GeminiClient):
+    def __init__(self, client: BedrockClient):
         self.client = client
 
     async def run_strategy(self, strategy: TestStrategy) -> None:
@@ -135,9 +135,12 @@ class StrategyRunner:
 
 
 async def main():
-    client = GeminiClient(
-        GeminiConfig(
-            api_key=settings.GEMINI_API_KEY
+    client = BedrockClient(
+        BedrockConfig(
+            access_key=settings.AWS_ACCESS_KEY,
+            secret_key=settings.AWS_SECRET_KEY,
+            region=settings.AWS_REGION,
+            model="global.anthropic.claude-sonnet-4-5-20250929-v1:0"
         )
     )
 

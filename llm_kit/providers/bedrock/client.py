@@ -1,6 +1,7 @@
 import asyncio
-import json
 from typing import Any, Dict
+
+from llm_kit.core.json_utils import extract_json
 
 try:
     import boto3
@@ -29,7 +30,7 @@ class BedrockClient(BaseLLMClient):
         self._adapter = self._resolve_adapter()
 
     def _resolve_adapter(self):
-        if self.config.model.startswith("anthropic."):
+        if self.config.model.startswith("anthropic.") or self.config.model.startswith("global.anthropic."):
             return ClaudeAdapter(self.config.model)
 
         raise ValueError(f"Unsupported Bedrock model: {self.config.model}")
@@ -58,4 +59,4 @@ class BedrockClient(BaseLLMClient):
         )
 
         raw = self._adapter.parse_response(response)
-        return json.loads(raw)
+        return extract_json(raw)

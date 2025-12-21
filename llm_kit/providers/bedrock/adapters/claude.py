@@ -93,9 +93,18 @@ class ClaudeAdapter(BedrockModelAdapter):
         schema: Dict[str, Any],
         *,
         files: Optional[List[LLMFile]] = None,
+        inject_schema: bool = True,
         **kwargs: Any,
     ) -> Dict[str, Any]:
-        return self._build_request(prompt, files=files, **kwargs)
+        if inject_schema:
+            schema_prompt = (
+                f"{prompt}\n\n"
+                f"Return ONLY valid JSON matching this schema:\n"
+                f"{json.dumps(schema)}"
+            )
+        else:
+            schema_prompt = prompt
+        return self._build_request(schema_prompt, files=files, inject_schema=inject_schema, **kwargs)
 
     def parse_response(self, response: Dict[str, Any]) -> str:
         body = json.loads(response["body"].read())

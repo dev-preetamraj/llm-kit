@@ -25,6 +25,7 @@ class BedrockModelAdapter(ABC):
         schema: Dict[str, Any],
         *,
         files: Optional[List[LLMFile]] = None,
+        inject_schema: bool = True,
         **kwargs: Any,
     ) -> Dict[str, Any]:
         pass
