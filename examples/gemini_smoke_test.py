@@ -142,9 +142,9 @@ async def main():
     )
 
     strategies = [
-        # GenerateTextWithoutFileStrategy(),
-        # GenerateTextWithFileStrategy(),
-        # GenerateJsonWithoutFileStrategy(),
+        GenerateTextWithoutFileStrategy(),
+        GenerateTextWithFileStrategy(),
+        GenerateJsonWithoutFileStrategy(),
         GenerateJsonWithFileStrategy(),
     ]
 
