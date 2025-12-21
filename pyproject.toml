@@ -1,10 +1,11 @@
 [tool.poetry]
-name = "llm-kit"
+name = "llm-kit-pro"
 version = "0.1.0"
 description = "A unified toolkit for working with multiple LLM providers"
 authors = ["Preetam Raj"]
 license = "MIT"
 readme = "README.md"
+packages = [{include = "llm_kit"}]
 keywords = ["llm", "ai", "openai", "gemini", "anthropic", "language-models", "async"]
 classifiers = [
     "Development Status :: 3 - Alpha",
