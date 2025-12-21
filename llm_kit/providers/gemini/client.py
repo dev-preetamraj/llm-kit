@@ -1,12 +1,20 @@
 import asyncio
 from typing import Any, Dict, List, Optional
 
-import google.genai as genai
-from google.genai import types
-
 from llm_kit.core.base import BaseLLMClient
 from llm_kit.core.inputs import LLMFile
 from llm_kit.providers.gemini.config import GeminiConfig
+
+try:
+    import google.genai as genai
+    from google.genai import types
+except ImportError as e:
+    raise ImportError(
+        "Gemini support is not installed.\n"
+        "Install it with:\n"
+        "  pip install llm-kit-pro[gemini]"
+    ) from e
+
 
 
 class GeminiClient(BaseLLMClient):
