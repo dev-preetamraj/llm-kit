@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING, Dict, Literal, Type, overload
 
-from llm_kit.core.base import BaseLLMClient
+from llm_kit_pro.core.base import BaseLLMClient
 
 # ---------------- runtime registry ----------------
 
@@ -14,8 +14,8 @@ def register_provider(name: str, client: Type[BaseLLMClient]) -> None:
 # ---------------- typing only (NO runtime imports) ----------------
 
 if TYPE_CHECKING:
-    from llm_kit.providers.bedrock.client import BedrockClient
-    from llm_kit.providers.gemini.client import GeminiClient
+    from llm_kit_pro.providers.bedrock.client import BedrockClient
+    from llm_kit_pro.providers.gemini.client import GeminiClient
 
 ProviderName = Literal["bedrock", "gemini"]
 

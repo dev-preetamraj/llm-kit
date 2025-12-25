@@ -62,7 +62,7 @@ text = await llm.generate_text(
 ### Text generation with a file (PDF, image, etc.)
 
 ```python
-from llm_kit.core import LLMFile
+from llm_kit_pro.core import LLMFile
 
 pdf = LLMFile(
     content=pdf_bytes,
@@ -126,7 +126,7 @@ class BaseLLMClient:
 A provider-agnostic representation of file inputs:
 
 ```python
-from llm_kit.core import LLMFile
+from llm_kit_pro.core import LLMFile
 ```
 
 ---

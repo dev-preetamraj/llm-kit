@@ -5,10 +5,10 @@ from typing import Any, Dict, List
 
 from pydantic import BaseModel
 
-from llm_kit.core.inputs import LLMFile
-from llm_kit.providers.bedrock.client import BedrockClient
-from llm_kit.providers.bedrock.config import BedrockConfig
-from llm_kit.settings import settings
+from llm_kit_pro.core.inputs import LLMFile
+from llm_kit_pro.providers.bedrock.client import BedrockClient
+from llm_kit_pro.providers.bedrock.config import BedrockConfig
+from llm_kit_pro.settings import settings
 
 
 class GreetingSchema(BaseModel):

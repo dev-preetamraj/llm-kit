@@ -2,9 +2,9 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from llm_kit.core.inputs import LLMFile
-from llm_kit.providers.gemini.client import GeminiClient
-from llm_kit.providers.gemini.config import GeminiConfig
+from llm_kit_pro.core.inputs import LLMFile
+from llm_kit_pro.providers.gemini.client import GeminiClient
+from llm_kit_pro.providers.gemini.config import GeminiConfig
 
 
 @pytest.mark.asyncio

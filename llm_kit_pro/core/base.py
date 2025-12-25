@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Any, Dict, List, Optional
 
-from llm_kit.core.inputs import LLMFile
+from llm_kit_pro.core.inputs import LLMFile
 
 
 class BaseLLMClient(ABC):

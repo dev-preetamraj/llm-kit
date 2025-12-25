@@ -1,7 +1,7 @@
 import asyncio
 from typing import Any, Dict
 
-from llm_kit.core.json_utils import extract_json
+from llm_kit_pro.core.json_utils import extract_json
 
 try:
     import boto3
@@ -12,9 +12,9 @@ except ImportError as e:
         "  pip install llm-kit-pro[bedrock]"
     ) from e
 
-from llm_kit.core.base import BaseLLMClient
-from llm_kit.providers.bedrock.adapters.claude import ClaudeAdapter
-from llm_kit.providers.bedrock.config import BedrockConfig
+from llm_kit_pro.core.base import BaseLLMClient
+from llm_kit_pro.providers.bedrock.adapters.claude import ClaudeAdapter
+from llm_kit_pro.providers.bedrock.config import BedrockConfig
 
 
 class BedrockClient(BaseLLMClient):

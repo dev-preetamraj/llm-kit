@@ -2,9 +2,9 @@ import base64
 import json
 from typing import Any, Dict, List, Optional
 
-from llm_kit.core.inputs import LLMFile
-from llm_kit.providers.bedrock.adapters.base import BedrockModelAdapter
-from llm_kit.providers.bedrock.constants import ANTHROPIC_BEDROCK_VERSION
+from llm_kit_pro.core.inputs import LLMFile
+from llm_kit_pro.providers.bedrock.adapters.base import BedrockModelAdapter
+from llm_kit_pro.providers.bedrock.constants import ANTHROPIC_BEDROCK_VERSION
 
 
 class ClaudeAdapter(BedrockModelAdapter):

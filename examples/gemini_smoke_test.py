@@ -5,10 +5,10 @@ from typing import Any, Dict, List
 
 from pydantic import BaseModel
 
-from llm_kit.core.inputs import LLMFile
-from llm_kit.providers.gemini.client import GeminiClient
-from llm_kit.providers.gemini.config import GeminiConfig
-from llm_kit.settings import settings
+from llm_kit_pro.core.inputs import LLMFile
+from llm_kit_pro.providers.gemini.client import GeminiClient
+from llm_kit_pro.providers.gemini.config import GeminiConfig
+from llm_kit_pro.settings import settings
 
 
 class GreetingSchema(BaseModel):

@@ -1,9 +1,9 @@
 import asyncio
 from typing import Any, Dict, List, Optional
 
-from llm_kit.core.base import BaseLLMClient
-from llm_kit.core.inputs import LLMFile
-from llm_kit.providers.gemini.config import GeminiConfig
+from llm_kit_pro.core.base import BaseLLMClient
+from llm_kit_pro.core.inputs import LLMFile
+from llm_kit_pro.providers.gemini.config import GeminiConfig
 
 try:
     import google.genai as genai
