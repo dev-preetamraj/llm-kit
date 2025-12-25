@@ -1,6 +1,6 @@
-# llm-kit
+# llm-kit-pro
 
-**llm-kit** is a unified, async-first Python toolkit for interacting with multiple
+**llm-kit-pro** is a unified, async-first Python toolkit for interacting with multiple
 Large Language Model (LLM) providers through a consistent, provider-agnostic API.
 
 It supports:
@@ -18,7 +18,7 @@ It supports:
 
 LLMs generate **outputs**, not OCR results.
 
-`llm-kit` exposes two primary operations:
+`llm-kit-pro` exposes two primary operations:
 
 - `generate_text` → free-form text
 - `generate_json` → structured, schema-driven output
@@ -35,14 +35,14 @@ OCR and file parsing are treated as **provider implementation details**.
 ## 📦 Installation
 
 ```bash
-pip install llm-kit
+pip install llm-kit-pro
 ```
 
 Optional provider support (example):
 
 ```bash
-pip install llm-kit[openai]
-pip install llm-kit[gemini]
+pip install llm-kit-pro[openai]
+pip install llm-kit-pro[gemini]
 ```
 
 ---
@@ -78,22 +78,20 @@ summary = await llm.generate_text(
 
 ---
 
-### Structured JSON extraction
+### Structured JSON extraction using Pydantic models
 
 ```python
-schema = {
-    "type": "object",
-    "properties": {
-        "consumer_name": {"type": "string"},
-        "bill_amount": {"type": "number"},
-        "due_date": {"type": "string"},
-    },
-    "required": ["consumer_name", "bill_amount"],
-}
+from pydantic import BaseModel
+from typing import Optional
+
+class BillDetails(BaseModel):
+    consumer_name: str
+    bill_amount: float
+    due_date: Optional[str] = None
 
 data = await llm.generate_json(
     prompt="Extract billing details from this document",
-    schema=schema,
+    schema=BillDetails.model_json_schema(),
     files=[pdf],
 )
 ```
@@ -140,30 +138,8 @@ Supported / planned:
 - OpenAI
 - Gemini
 - Anthropic
+- Bedrock
 - Local / OSS models (future)
-
----
-
-## 🛠 Development
-
-### Install dependencies
-
-```bash
-poetry install
-```
-
-### Format & lint
-
-```bash
-poetry run ruff check . --fix
-poetry run black .
-```
-
-### Run tests
-
-```bash
-poetry run pytest
-```
 
 ---
 
