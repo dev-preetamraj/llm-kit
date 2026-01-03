@@ -16,14 +16,17 @@ def register_provider(name: str, client: Type[BaseLLMClient]) -> None:
 if TYPE_CHECKING:
     from llm_kit_pro.providers.bedrock.client import BedrockClient
     from llm_kit_pro.providers.gemini.client import GeminiClient
+    from llm_kit_pro.providers.openai.client import OpenAIClient
 
-ProviderName = Literal["bedrock", "gemini"]
+ProviderName = Literal["bedrock", "gemini", "openai"]
 
 
 @overload
 def get_provider(name: Literal["bedrock"]) -> Type["BedrockClient"]: ...
 @overload
 def get_provider(name: Literal["gemini"]) -> Type["GeminiClient"]: ...
+@overload
+def get_provider(name: Literal["openai"]) -> Type["OpenAIClient"]: ...
 
 
 def get_provider(name: ProviderName) -> Type[BaseLLMClient]:
