@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "llm-kit-pro"
-version = "0.2.6"
+version = "0.2.7"
 description = "A unified toolkit for working with multiple LLM providers"
 authors = ["Preetam Raj"]
 license = "MIT"
@@ -25,6 +25,7 @@ pydantic-settings = "^2.12.0"
 httpx = ">=0.28.1"
 google-genai = { version = "^1.0.0", optional = true }
 boto3 = { version = "^1.42.14", optional = true }
+json-repair = "^0.55.0"
 
 [tool.poetry.extras]
 gemini = ["google-genai"]

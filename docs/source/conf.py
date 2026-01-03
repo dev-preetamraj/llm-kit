@@ -6,7 +6,7 @@ sys.path.insert(0, os.path.abspath("../.."))
 project = "llm-kit-pro"
 copyright = "2026, Preetam Raj"
 author = "Preetam Raj"
-release = "0.2.6"
+release = "0.2.7"
 
 # -- General configuration ---------------------------------------------------
 

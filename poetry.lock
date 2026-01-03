@@ -509,6 +509,17 @@ files = [
 ]
 
 [[package]]
+name = "json-repair"
+version = "0.55.0"
+description = "A package to repair broken json strings"
+optional = false
+python-versions = ">=3.10"
+files = [
+    {file = "json_repair-0.55.0-py3-none-any.whl", hash = "sha256:bcf4880f5e6ad21a0f70ab034e3d1d398c2ae9698dc5717d7015afbac77b8ed7"},
+    {file = "json_repair-0.55.0.tar.gz", hash = "sha256:9fafb47d92582ef4bdd3520656bdb0fcb37b46cf6aa99c1926b7895abc0a3a4b"},
+]
+
+[[package]]
 name = "markdown-it-py"
 version = "3.0.0"
 description = "Python port of markdown-it. Markdown parsing, done right!"
@@ -1572,4 +1583,4 @@ gemini = ["google-genai"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "6e9435bf1ee133b4f9579bcfbb48ff808f4112f3d7afba24de6d6f31e673808e"
+content-hash = "3518bde5ed4a39f9a3dc74e04350934e6043876b3e043e3be3b5f9727a98319d"
