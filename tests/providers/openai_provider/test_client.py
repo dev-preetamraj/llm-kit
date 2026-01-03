@@ -1,7 +1,7 @@
-import json
 from unittest.mock import MagicMock, patch
 
 import pytest
+from pydantic import BaseModel
 
 from llm_kit_pro.core.inputs import LLMFile
 from llm_kit_pro.providers.openai.client import OpenAIClient
@@ -67,25 +67,27 @@ async def test_generate_text_with_image_file(mock_openai_client):
 
 @pytest.mark.asyncio
 async def test_generate_json(mock_openai_client):
+    class AmountSchema(BaseModel):
+        amount: float
+
     expected_data = {"amount": 123.45}
+
     mock_response = MagicMock()
-    mock_response.choices = [MagicMock()]
-    mock_response.choices[0].message.content = json.dumps(expected_data)
+    mock_message = MagicMock()
+    mock_message.refusal = None
+    mock_message.parsed = AmountSchema(**expected_data)
+    mock_response.choices = [MagicMock(message=mock_message)]
 
     mock_instance = mock_openai_client.return_value
-    mock_instance.chat.completions.create.return_value = mock_response
+    mock_instance.beta.chat.completions.parse.return_value = mock_response
 
     client = OpenAIClient(OpenAIConfig(api_key="fake-key"))
     result = await client.generate_json(
         prompt="Extract amount",
-        schema={
-            "type": "object",
-            "properties": {"amount": {"type": "number"}},
-            "required": ["amount"],
-        },
+        schema=AmountSchema,
     )
 
     assert result == expected_data
-    mock_instance.chat.completions.create.assert_called_once()
-    _, kwargs = mock_instance.chat.completions.create.call_args
-    assert kwargs["response_format"]["type"] == "json_schema"
+    mock_instance.beta.chat.completions.parse.assert_called_once()
+    _, kwargs = mock_instance.beta.chat.completions.parse.call_args
+    assert kwargs["response_format"] == AmountSchema

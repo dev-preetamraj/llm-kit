@@ -1,6 +1,7 @@
 from unittest.mock import MagicMock, patch
 
 import pytest
+from pydantic import BaseModel
 
 from llm_kit_pro.core.inputs import LLMFile
 from llm_kit_pro.providers.gemini.client import GeminiClient
@@ -67,7 +68,12 @@ async def test_generate_text_with_file():
 
 @pytest.mark.asyncio
 async def test_generate_json():
-    mock_response = MagicMock(parsed={"amount": 123.45})
+    class AmountSchema(BaseModel):
+        amount: float
+
+    expected_data = {"amount": 123.45}
+    # For Gemini, the SDK might return the model instance if passed Type[BaseModel]
+    mock_response = MagicMock(parsed=AmountSchema(**expected_data))
 
     mock_models = MagicMock()
     mock_models.generate_content = MagicMock(return_value=mock_response)
@@ -84,10 +90,7 @@ async def test_generate_json():
 
         result = await client.generate_json(
             prompt="Extract amount",
-            schema={
-                "type": "object",
-                "properties": {"amount": {"type": "number"}},
-            },
+            schema=AmountSchema,
         )
 
-        assert result == {"amount": 123.45}
+        assert result == expected_data

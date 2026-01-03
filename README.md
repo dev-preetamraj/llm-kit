@@ -1,34 +1,19 @@
 # llm-kit-pro
 
-**llm-kit-pro** is a unified, async-first Python toolkit for interacting with multiple
-Large Language Model (LLM) providers through a consistent, provider-agnostic API.
+**llm-kit-pro** is a unified, async-first Python toolkit for interacting with multiple Large Language Model (LLM) providers through a consistent, provider-agnostic API.
 
-It supports:
-
-- Multiple LLM providers (OpenAI, Gemini, Anthropic, etc.)
-- Text and structured JSON generation
-- Multimodal inputs (PDFs, images, text files)
-- Clean abstractions and strong typing
+It is designed for developers who need to switch between providers (OpenAI, Gemini, Anthropic/Bedrock) without rewriting their core application logic, with a heavy emphasis on **structured data** and **multimodal inputs**.
 
 ---
 
-## ✨ Core Ideas
+## ✨ Features
 
-### 1. Outputs are explicit
-
-LLMs generate **outputs**, not OCR results.
-
-`llm-kit-pro` exposes two primary operations:
-
-- `generate_text` → free-form text
-- `generate_json` → structured, schema-driven output
-
-### 2. Inputs can be text **and/or files**
-
-Files (PDFs, images, etc.) are **first-class inputs** and can be passed directly
-to generation methods.
-
-OCR and file parsing are treated as **provider implementation details**.
+- **Unified API**: One interface for OpenAI, Gemini, and AWS Bedrock.
+- **Pydantic-First Structured Output**: Pass Pydantic models directly to get validated, type-safe dictionaries back.
+- **Native "Strict Mode"**: Automatically handles OpenAI's Structured Outputs requirements.
+- **Multimodal Inputs**: First-class support for PDF, PNG, JPEG, and Text files across all supported providers.
+- **Async-First**: Built from the ground up for high-performance asynchronous Python applications.
+- **Provider-Agnostic Inputs**: Use `LLMFile` to handle different file types without worrying about provider-specific formatting.
 
 ---
 
@@ -38,108 +23,119 @@ OCR and file parsing are treated as **provider implementation details**.
 pip install llm-kit-pro
 ```
 
-Optional provider support (example):
+Install with specific provider support:
 
 ```bash
-pip install llm-kit-pro[openai]
-pip install llm-kit-pro[gemini]
+# For OpenAI
+pip install "llm-kit-pro[openai]"
+
+# For Google Gemini
+pip install "llm-kit-pro[gemini]"
+
+# For AWS Bedrock (Anthropic/Llama/etc)
+pip install "llm-kit-pro[bedrock]"
 ```
 
 ---
 
 ## 🚀 Quick Start
 
-### Text-only generation
+### 1. Simple Text Generation
 
 ```python
-text = await llm.generate_text(
-    prompt="Explain what power factor is in simple terms"
+from llm_kit_pro.providers.openai import OpenAIClient, OpenAIConfig
+
+client = OpenAIClient(OpenAIConfig(api_key="your-key"))
+
+text = await client.generate_text(
+    prompt="Explain quantum entanglement like I'm five."
 )
+print(text)
 ```
 
----
+### 2. Structured Data with Pydantic
 
-### Text generation with a file (PDF, image, etc.)
-
-```python
-from llm_kit_pro.core import LLMFile
-
-pdf = LLMFile(
-    content=pdf_bytes,
-    mime_type="application/pdf",
-    filename="bill.pdf",
-)
-
-summary = await llm.generate_text(
-    prompt="Summarize this electricity bill",
-    files=[pdf],
-)
-```
-
----
-
-### Structured JSON extraction using Pydantic models
+Instead of messy regex or manual JSON parsing, define your schema as a Pydantic model. `llm-kit-pro` handles the schema injection, strict mode enforcement, and final validation.
 
 ```python
 from pydantic import BaseModel
-from typing import Optional
+from llm_kit_pro.providers.gemini import GeminiClient, GeminiConfig
 
-class BillDetails(BaseModel):
-    consumer_name: str
-    bill_amount: float
-    due_date: Optional[str] = None
+class MovieReview(BaseModel):
+    title: str
+    rating: int
+    summary: str
+    sentiment: str
 
-data = await llm.generate_json(
-    prompt="Extract billing details from this document",
-    schema=BillDetails.model_json_schema(),
-    files=[pdf],
+client = GeminiClient(GeminiConfig(api_key="your-key"))
+
+# Pass the class directly!
+data = await client.generate_json(
+    prompt="Review the movie 'Inception'",
+    schema=MovieReview
+)
+
+print(data["rating"])
+```
+
+### 3. Multimodal: Extracting from a PDF
+
+`llm-kit-pro` treats files as first-class citizens. You can pass images or PDFs directly to the model.
+
+```python
+from llm_kit_pro.core.inputs import LLMFile
+from pydantic import BaseModel
+
+class Invoice(BaseModel):
+    vendor: str
+    amount: float
+    due_date: str
+
+# Load your file
+with open("invoice.pdf", "rb") as f:
+    pdf = LLMFile(
+        content=f.read(),
+        mime_type="application/pdf",
+        filename="invoice.pdf"
+    )
+
+# Extract structured data from the document
+data = await client.generate_json(
+    prompt="Extract the invoice details",
+    schema=Invoice,
+    files=[pdf]
 )
 ```
 
 ---
 
-## 🧠 Design Philosophy
-
-- **Provider-agnostic**: No OpenAI/Gemini specifics in the public API
-- **Async-first**: Built for modern Python backends
-- **Composable**: Easy to plug into pipelines (FastAPI, background jobs, ETL)
-- **Explicit contracts**: Clear separation of inputs, outputs, and providers
-
----
-
-## 🧩 Core Abstractions
+## 🧠 Core Abstractions
 
 ### `BaseLLMClient`
 
-All providers implement the same interface:
+Every provider implements this interface, ensuring your code remains portable.
 
-```python
-class BaseLLMClient:
-    async def generate_text(...)
-    async def generate_json(...)
-```
+- `generate_text(prompt, files=None, **kwargs)` -> `str`
+- `generate_json(prompt, schema, files=None, **kwargs)` -> `dict`
 
 ### `LLMFile`
 
-A provider-agnostic representation of file inputs:
+A simple container for file-based inputs.
 
-```python
-from llm_kit_pro.core import LLMFile
-```
+- `content`: Raw bytes.
+- `mime_type`: e.g., `application/pdf`, `image/jpeg`.
+- `filename`: Optional metadata.
 
 ---
 
-## 🔌 Providers
+## 🔌 Supported Providers
 
-Each provider is implemented as an adapter that conforms to `BaseLLMClient`.
-
-Supported / planned:
-
-- OpenAI
-- Gemini
-- Anthropic
-- Bedrock
-- Local / OSS models (future)
+| Provider          | Installation Extra | Status     | Structured Output  | Multimodal           |
+| :---------------- | :----------------- | :--------- | :----------------- | :------------------- |
+| **OpenAI**        | `[openai]`         | ✅ Stable  | Native Strict Mode | Images               |
+| **Google Gemini** | `[gemini]`         | ✅ Stable  | Native JSON Schema | Images, PDF          |
+| **AWS Bedrock**   | `[bedrock]`        | ✅ Stable  | Schema Injection   | Images, PDF (Claude) |
+| **Anthropic**     | `[anthropic]`      | 🏗️ Planned | -                  | -                    |
 
 ---
 
@@ -147,7 +143,7 @@ Supported / planned:
 
 🚧 **Under active development**
 
-The public API is stabilizing. Expect rapid iteration until `v1.0`.
+The public API is stabilizing. We are currently focusing on adding more Bedrock adapters (Llama 3, Titan) and a native Anthropic provider.
 
 ---
 

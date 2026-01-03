@@ -2,6 +2,7 @@ import json
 from unittest.mock import MagicMock, patch
 
 import pytest
+from pydantic import BaseModel
 
 from llm_kit_pro.core.inputs import LLMFile
 from llm_kit_pro.providers.bedrock.client import BedrockClient
@@ -12,9 +13,9 @@ from llm_kit_pro.providers.bedrock.config import BedrockConfig
 async def test_generate_text_without_files():
     # Mock Bedrock response
     mock_body = MagicMock()
-    mock_body.read.return_value = json.dumps({
-        "content": [{"text": "Hello from Claude"}]
-    }).encode()
+    mock_body.read.return_value = json.dumps(
+        {"content": [{"text": "Hello from Claude"}]}
+    ).encode()
 
     mock_response = {"body": mock_body}
 
@@ -45,9 +46,9 @@ async def test_generate_text_with_file():
     )
 
     mock_body = MagicMock()
-    mock_body.read.return_value = json.dumps({
-        "content": [{"text": "Bill summary"}]
-    }).encode()
+    mock_body.read.return_value = json.dumps(
+        {"content": [{"text": "Bill summary"}]}
+    ).encode()
 
     mock_response = {"body": mock_body}
 
@@ -74,18 +75,22 @@ async def test_generate_text_with_file():
 
 @pytest.mark.asyncio
 async def test_generate_json_with_extraction():
+    class AmountSchema(BaseModel):
+        amount: float
+
     # Claude returns text WITH extra prose inside Bedrock envelope
     mock_body = MagicMock()
-    mock_body.read.return_value = json.dumps({
-        "content": [
-            {
-                "text": (
-                    "Sure! Here is the extracted data:\n\n"
-                    "{ \"amount\": 123.45 }\n"
-                )
-            }
-        ]
-    }).encode()
+    mock_body.read.return_value = json.dumps(
+        {
+            "content": [
+                {
+                    "text": (
+                        'Sure! Here is the extracted data:\n\n{ "amount": 123.45 }\n'
+                    )
+                }
+            ]
+        }
+    ).encode()
 
     mock_response = {"body": mock_body}
 
@@ -104,10 +109,7 @@ async def test_generate_json_with_extraction():
 
         result = await client.generate_json(
             prompt="Extract amount",
-            schema={
-                "type": "object",
-                "properties": {"amount": {"type": "number"}},
-            },
+            schema=AmountSchema,
         )
 
         assert result == {"amount": 123.45}
