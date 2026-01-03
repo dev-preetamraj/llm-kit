@@ -4,9 +4,9 @@ import sys
 sys.path.insert(0, os.path.abspath("../.."))
 
 project = "llm-kit-pro"
-copyright = "2024, Preetam Raj"
+copyright = "2026, Preetam Raj"
 author = "Preetam Raj"
-release = "0.2.5"
+release = "0.2.6"
 
 # -- General configuration ---------------------------------------------------
 
