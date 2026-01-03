@@ -1,6 +1,8 @@
 import base64
 import json
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Type
+
+from pydantic import BaseModel
 
 from llm_kit_pro.core.inputs import LLMFile
 from llm_kit_pro.providers.bedrock.adapters.base import BedrockModelAdapter
@@ -47,9 +49,7 @@ class ClaudeAdapter(BedrockModelAdapter):
         temperature = kwargs.get("temperature")
         max_tokens = kwargs.get("max_tokens", 1024)
 
-        content_blocks: List[Dict[str, Any]] = [
-            {"type": "text", "text": prompt}
-        ]
+        content_blocks: List[Dict[str, Any]] = [{"type": "text", "text": prompt}]
 
         if files:
             for file in files:
@@ -90,21 +90,22 @@ class ClaudeAdapter(BedrockModelAdapter):
     def build_json_request(
         self,
         prompt: str,
-        schema: Dict[str, Any],
+        schema: Type[BaseModel],
         *,
         files: Optional[List[LLMFile]] = None,
         inject_schema: bool = True,
         **kwargs: Any,
     ) -> Dict[str, Any]:
         if inject_schema:
+            json_schema = schema.model_json_schema()
             schema_prompt = (
                 f"{prompt}\n\n"
                 f"Return ONLY valid JSON matching this schema:\n"
-                f"{json.dumps(schema)}"
+                f"{json.dumps(json_schema)}"
             )
         else:
             schema_prompt = prompt
-        return self._build_request(schema_prompt, files=files, inject_schema=inject_schema, **kwargs)
+        return self._build_request(schema_prompt, files=files, **kwargs)
 
     def parse_response(self, response: Dict[str, Any]) -> str:
         body = json.loads(response["body"].read())

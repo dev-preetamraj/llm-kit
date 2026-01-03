@@ -1,10 +1,11 @@
 import asyncio
 import base64
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Type, Union
+
+from pydantic import BaseModel
 
 from llm_kit_pro.core.base import BaseLLMClient
 from llm_kit_pro.core.inputs import LLMFile
-from llm_kit_pro.core.json_utils import extract_json
 from llm_kit_pro.providers.openai.config import OpenAIConfig
 
 try:
@@ -47,34 +48,35 @@ class OpenAIClient(BaseLLMClient):
     async def generate_json(
         self,
         prompt: str,
-        schema: Dict[str, Any],
+        schema: Type[BaseModel],
         *,
         files: Optional[List[LLMFile]] = None,
         **kwargs: Any,
     ) -> Dict[str, Any]:
         messages = [{"role": "user", "content": self._build_contents(prompt, files)}]
 
-        # OpenAI supports structured outputs via response_format with json_schema
-        response_format = {
-            "type": "json_schema",
-            "json_schema": {
-                "name": "structured_output",
-                "schema": schema,
-                "strict": True,
-            },
-        }
-
+        # OpenAI's native Pydantic support handles strict mode transformation and validation
         response = await asyncio.to_thread(
-            self._client.chat.completions.create,
+            self._client.beta.chat.completions.parse,
             model=kwargs.get("model", self.config.model),
             messages=messages,
             temperature=kwargs.get("temperature", self.config.temperature),
-            response_format=response_format,
-            **{k: v for k, v in kwargs.items() if k not in ["model", "temperature"]},
+            response_format=schema,
+            **{
+                k: v
+                for k, v in kwargs.items()
+                if k not in ["model", "temperature", "response_format"]
+            },
         )
 
-        content = response.choices[0].message.content or ""
-        return extract_json(content)
+        message = response.choices[0].message
+        if message.refusal:
+            raise ValueError(f"Model refused to generate output: {message.refusal}")
+
+        if not message.parsed:
+            raise ValueError("Failed to parse response into the provided schema.")
+
+        return message.parsed.model_dump()
 
     def _build_contents(
         self, prompt: str, files: Optional[List[LLMFile]]

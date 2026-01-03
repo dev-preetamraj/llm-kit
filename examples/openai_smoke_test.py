@@ -6,8 +6,8 @@ from typing import Any, Dict, List
 from pydantic import BaseModel
 
 from llm_kit_pro.core.inputs import LLMFile
-from llm_kit_pro.providers.gemini.client import GeminiClient
-from llm_kit_pro.providers.gemini.config import GeminiConfig
+from llm_kit_pro.providers.openai.client import OpenAIClient
+from llm_kit_pro.providers.openai.config import OpenAIConfig
 from llm_kit_pro.settings import settings
 
 
@@ -18,13 +18,12 @@ class GreetingSchema(BaseModel):
     language: str
 
 
-class BillExtractionSchema(BaseModel):
-    """Schema for extracting bill information from PDF."""
+class InfoExtractionSchema(BaseModel):
+    """Schema for extracting information from text."""
 
-    consumer_name: str
-    bill_amount: float
-    due_date: str
-    account_number: str
+    project_name: str
+    description: str
+    key_features: List[str]
 
 
 class TestStrategy(ABC):
@@ -36,7 +35,7 @@ class TestStrategy(ABC):
         pass
 
     @abstractmethod
-    async def execute(self, client: GeminiClient) -> Any:
+    async def execute(self, client: OpenAIClient) -> Any:
         """Execute the test strategy."""
         pass
 
@@ -47,7 +46,7 @@ class GenerateTextWithoutFileStrategy(TestStrategy):
     def get_name(self) -> str:
         return "generate_text without file"
 
-    async def execute(self, client: GeminiClient) -> str:
+    async def execute(self, client: OpenAIClient) -> str:
         return await client.generate_text("Say hello in one sentence")
 
 
@@ -57,16 +56,16 @@ class GenerateTextWithFileStrategy(TestStrategy):
     def get_name(self) -> str:
         return "generate_text with file"
 
-    async def execute(self, client: GeminiClient) -> str:
-        bill_path = Path(__file__).parent.parent / "bill.pdf"
-        with open(bill_path, "rb") as f:
-            bill_content = f.read()
+    async def execute(self, client: OpenAIClient) -> str:
+        readme_path = Path(__file__).parent.parent / "README.md"
+        with open(readme_path, "rb") as f:
+            readme_content = f.read()
 
-        bill_file = LLMFile(
-            content=bill_content, mime_type="application/pdf", filename="bill.pdf"
+        readme_file = LLMFile(
+            content=readme_content, mime_type="text/plain", filename="README.md"
         )
         return await client.generate_text(
-            "Summarize this bill in one sentence", files=[bill_file]
+            "Summarize this README in one sentence", files=[readme_file]
         )
 
 
@@ -76,7 +75,7 @@ class GenerateJsonWithoutFileStrategy(TestStrategy):
     def get_name(self) -> str:
         return "generate_json without file"
 
-    async def execute(self, client: GeminiClient) -> Dict[str, Any]:
+    async def execute(self, client: OpenAIClient) -> Dict[str, Any]:
         return await client.generate_json(
             "Generate a greeting in Spanish", schema=GreetingSchema
         )
@@ -88,25 +87,25 @@ class GenerateJsonWithFileStrategy(TestStrategy):
     def get_name(self) -> str:
         return "generate_json with file"
 
-    async def execute(self, client: GeminiClient) -> Dict[str, Any]:
-        bill_path = Path(__file__).parent.parent / "bill.pdf"
-        with open(bill_path, "rb") as f:
-            bill_content = f.read()
+    async def execute(self, client: OpenAIClient) -> Dict[str, Any]:
+        readme_path = Path(__file__).parent.parent / "README.md"
+        with open(readme_path, "rb") as f:
+            readme_content = f.read()
 
-        bill_file = LLMFile(
-            content=bill_content, mime_type="application/pdf", filename="bill.pdf"
+        readme_file = LLMFile(
+            content=readme_content, mime_type="text/plain", filename="README.md"
         )
         return await client.generate_json(
-            "Extract the billing information from this document",
-            schema=BillExtractionSchema,
-            files=[bill_file],
+            "Extract project information from this README",
+            schema=InfoExtractionSchema,
+            files=[readme_file],
         )
 
 
 class StrategyRunner:
     """Runs test strategies against a client."""
 
-    def __init__(self, client: GeminiClient):
+    def __init__(self, client: OpenAIClient):
         self.client = client
 
     async def run_strategy(self, strategy: TestStrategy) -> None:
@@ -127,7 +126,7 @@ class StrategyRunner:
 
 
 async def main():
-    client = GeminiClient(GeminiConfig(api_key=settings.GEMINI_API_KEY))
+    client = OpenAIClient(OpenAIConfig(api_key=settings.OEPNAI_API_KEY))
 
     strategies = [
         GenerateTextWithoutFileStrategy(),

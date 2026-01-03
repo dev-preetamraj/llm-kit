@@ -63,13 +63,10 @@ class GenerateTextWithFileStrategy(TestStrategy):
             bill_content = f.read()
 
         bill_file = LLMFile(
-            content=bill_content,
-            mime_type="application/pdf",
-            filename="bill.pdf"
+            content=bill_content, mime_type="application/pdf", filename="bill.pdf"
         )
         return await client.generate_text(
-            "Summarize this bill in one sentence",
-            files=[bill_file]
+            "Summarize this bill in one sentence", files=[bill_file]
         )
 
 
@@ -80,10 +77,8 @@ class GenerateJsonWithoutFileStrategy(TestStrategy):
         return "generate_json without file"
 
     async def execute(self, client: BedrockClient) -> Dict[str, Any]:
-        schema = GreetingSchema.model_json_schema()
         return await client.generate_json(
-            "Generate a greeting in Spanish",
-            schema=schema
+            "Generate a greeting in Spanish", schema=GreetingSchema
         )
 
 
@@ -99,15 +94,12 @@ class GenerateJsonWithFileStrategy(TestStrategy):
             bill_content = f.read()
 
         bill_file = LLMFile(
-            content=bill_content,
-            mime_type="application/pdf",
-            filename="bill.pdf"
+            content=bill_content, mime_type="application/pdf", filename="bill.pdf"
         )
-        schema = BillExtractionSchema.model_json_schema()
         return await client.generate_json(
             "Extract the billing information from this document",
-            schema=schema,
-            files=[bill_file]
+            schema=BillExtractionSchema,
+            files=[bill_file],
         )
 
 
@@ -140,7 +132,7 @@ async def main():
             access_key=settings.AWS_ACCESS_KEY,
             secret_key=settings.AWS_SECRET_KEY,
             region=settings.AWS_REGION,
-            model="global.anthropic.claude-sonnet-4-5-20250929-v1:0"
+            model="global.anthropic.claude-sonnet-4-5-20250929-v1:0",
         )
     )
 

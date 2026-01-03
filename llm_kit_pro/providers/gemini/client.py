@@ -1,5 +1,7 @@
 import asyncio
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Type
+
+from pydantic import BaseModel
 
 from llm_kit_pro.core.base import BaseLLMClient
 from llm_kit_pro.core.inputs import LLMFile
@@ -14,7 +16,6 @@ except ImportError as e:
         "Install it with:\n"
         "  pip install llm-kit-pro[gemini]"
     ) from e
-
 
 
 class GeminiClient(BaseLLMClient):
@@ -39,9 +40,7 @@ class GeminiClient(BaseLLMClient):
             model=self.config.model,
             contents=contents,
             config={
-                "temperature": kwargs.get(
-                    "temperature", self.config.temperature
-                ),
+                "temperature": kwargs.get("temperature", self.config.temperature),
             },
         )
 
@@ -50,7 +49,7 @@ class GeminiClient(BaseLLMClient):
     async def generate_json(
         self,
         prompt: str,
-        schema: Dict[str, Any],
+        schema: Type[BaseModel],
         *,
         files: Optional[List[LLMFile]] = None,
         **kwargs: Any,
@@ -62,22 +61,26 @@ class GeminiClient(BaseLLMClient):
             model=self.config.model,
             contents=contents,
             config={
-                "temperature": kwargs.get(
-                    "temperature", self.config.temperature
-                ),
+                "temperature": kwargs.get("temperature", self.config.temperature),
                 "response_mime_type": "application/json",
                 "response_schema": schema,
             },
         )
 
+        if not response.parsed:
+            raise ValueError(
+                "Failed to parse Gemini response into the provided schema."
+            )
+
+        # If it's a Pydantic model, dump it to dict. Otherwise return as is.
+        if isinstance(response.parsed, BaseModel):
+            return response.parsed.model_dump()
         return response.parsed
-        
+
     def _build_contents(
         self, prompt: str, files: Optional[List[LLMFile]]
     ) -> list[types.Part]:
-        parts: list[types.Part] = [
-            types.Part.from_text(text=prompt)
-        ]
+        parts: list[types.Part] = [types.Part.from_text(text=prompt)]
 
         if files:
             for file in files:
@@ -89,4 +92,3 @@ class GeminiClient(BaseLLMClient):
                 )
 
         return parts
-

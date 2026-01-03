@@ -1,7 +1,7 @@
 import asyncio
-from typing import Any, Dict
+from typing import Any, Dict, List, Optional, Type
 
-from llm_kit_pro.core.json_utils import extract_json
+from pydantic import BaseModel
 
 try:
     import boto3
@@ -13,6 +13,8 @@ except ImportError as e:
     ) from e
 
 from llm_kit_pro.core.base import BaseLLMClient
+from llm_kit_pro.core.inputs import LLMFile
+from llm_kit_pro.core.json_utils import extract_json
 from llm_kit_pro.providers.bedrock.adapters.claude import ClaudeAdapter
 from llm_kit_pro.providers.bedrock.config import BedrockConfig
 
@@ -30,33 +32,42 @@ class BedrockClient(BaseLLMClient):
         self._adapter = self._resolve_adapter()
 
     def _resolve_adapter(self):
-        if self.config.model.startswith("anthropic.") or self.config.model.startswith("global.anthropic."):
+        if self.config.model.startswith("anthropic.") or self.config.model.startswith(
+            "global.anthropic."
+        ):
             return ClaudeAdapter(self.config.model)
 
         raise ValueError(f"Unsupported Bedrock model: {self.config.model}")
 
-    async def generate_text(self, prompt: str, **kwargs: Any) -> str:
-        request = self._adapter.build_text_request(prompt, **kwargs)
+    async def generate_text(
+        self,
+        prompt: str,
+        *,
+        files: Optional[List[LLMFile]] = None,
+        **kwargs: Any,
+    ) -> str:
+        request = self._adapter.build_text_request(prompt, files=files, **kwargs)
 
-        response = await asyncio.to_thread(
-            self._runtime.invoke_model,
-            **request
-        )
+        response = await asyncio.to_thread(self._runtime.invoke_model, **request)
 
         return self._adapter.parse_response(response)
 
     async def generate_json(
         self,
         prompt: str,
-        schema: Dict[str, Any],
+        schema: Type[BaseModel],
+        *,
+        files: Optional[List[LLMFile]] = None,
         **kwargs: Any,
     ) -> Dict[str, Any]:
-        request = self._adapter.build_json_request(prompt, schema, **kwargs)
-
-        response = await asyncio.to_thread(
-            self._runtime.invoke_model,
-            **request
+        request = self._adapter.build_json_request(
+            prompt, schema, files=files, **kwargs
         )
 
+        response = await asyncio.to_thread(self._runtime.invoke_model, **request)
+
         raw = self._adapter.parse_response(response)
-        return extract_json(raw)
+        parsed = extract_json(raw)
+
+        # Validate against the Pydantic model and return as dict
+        return schema.model_validate(parsed).model_dump()

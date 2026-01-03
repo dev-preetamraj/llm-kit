@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Type
+
+from pydantic import BaseModel
 
 from llm_kit_pro.core.inputs import LLMFile
 
@@ -37,21 +39,21 @@ class BaseLLMClient(ABC):
     async def generate_json(
         self,
         prompt: str,
-        schema: Dict[str, Any],
+        schema: Type[BaseModel],
         *,
         files: Optional[List[LLMFile]] = None,
         **kwargs: Any,
     ) -> Dict[str, Any]:
         """
-        Generate structured JSON output matching the provided schema.
+        Generate structured JSON output matching the provided Pydantic model.
 
         Args:
             prompt: User prompt / instruction.
-            schema: JSON schema describing expected output.
+            schema: Pydantic model class describing expected output.
             files: Optional list of attached files (PDF, image, etc.).
             **kwargs: Provider-specific options (model, temperature, etc.).
 
         Returns:
-            Parsed JSON output.
+            Validated JSON output as a dictionary.
         """
         raise NotImplementedError

@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Type
+
+from pydantic import BaseModel
 
 from llm_kit_pro.core.inputs import LLMFile
 
@@ -22,7 +24,7 @@ class BedrockModelAdapter(ABC):
     def build_json_request(
         self,
         prompt: str,
-        schema: Dict[str, Any],
+        schema: Type[BaseModel],
         *,
         files: Optional[List[LLMFile]] = None,
         inject_schema: bool = True,
