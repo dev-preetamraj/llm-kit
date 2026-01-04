@@ -46,7 +46,8 @@ pip install "llm-kit-pro[bedrock]"
 ### 1. Simple Text Generation
 
 ```python
-from llm_kit_pro.providers.openai import OpenAIClient, OpenAIConfig
+from llm_kit_pro.providers.openai import OpenAIClient
+from llm_kit_pro.providers.openai.config import OpenAIConfig
 
 client = OpenAIClient(OpenAIConfig(api_key="your-key"))
 
@@ -62,7 +63,8 @@ Instead of messy regex or manual JSON parsing, define your schema as a Pydantic 
 
 ```python
 from pydantic import BaseModel
-from llm_kit_pro.providers.gemini import GeminiClient, GeminiConfig
+from llm_kit_pro.providers.gemini import GeminiClient
+from llm_kit_pro.providers.gemini.config import GeminiConfig
 
 class MovieReview(BaseModel):
     title: str
