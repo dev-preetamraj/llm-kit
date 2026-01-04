@@ -1,4 +1,3 @@
-import base64
 from typing import Any, Dict, List, Optional, Type
 
 from pydantic import BaseModel
@@ -6,6 +5,7 @@ from pydantic import BaseModel
 from llm_kit_pro.core.base import BaseLLMClient
 from llm_kit_pro.core.inputs import LLMFile
 from llm_kit_pro.providers.anthropic.config import AnthropicConfig
+from llm_kit_pro.providers.anthropic.utils import build_content_blocks
 
 try:
     import anthropic
@@ -29,7 +29,7 @@ class AnthropicClient(BaseLLMClient):
         files: Optional[List[LLMFile]] = None,
         **kwargs: Any,
     ) -> str:
-        content = self._build_contents(prompt, files)
+        content = build_content_blocks(prompt, files, support_text_files=True)
 
         response = await self._client.messages.create(
             model=kwargs.get("model", self.config.model),
@@ -65,7 +65,7 @@ class AnthropicClient(BaseLLMClient):
             }
         ]
 
-        content = self._build_contents(prompt, files)
+        content = build_content_blocks(prompt, files, support_text_files=True)
 
         response = await self._client.messages.create(
             model=kwargs.get("model", self.config.model),
@@ -90,47 +90,3 @@ class AnthropicClient(BaseLLMClient):
         raise ValueError(
             "Anthropic failed to return a tool use block for JSON generation."
         )
-
-    def _build_contents(
-        self, prompt: str, files: Optional[List[LLMFile]]
-    ) -> List[Dict[str, Any]]:
-        content: List[Dict[str, Any]] = [{"type": "text", "text": prompt}]
-
-        if not files:
-            return content
-
-        for file in files:
-            encoded = base64.b64encode(file.content).decode("utf-8")
-            if file.mime_type.startswith("image/"):
-                content.append(
-                    {
-                        "type": "image",
-                        "source": {
-                            "type": "base64",
-                            "media_type": file.mime_type,
-                            "data": encoded,
-                        },
-                    }
-                )
-            elif file.mime_type == "application/pdf":
-                content.append(
-                    {
-                        "type": "document",
-                        "source": {
-                            "type": "base64",
-                            "media_type": "application/pdf",
-                            "data": encoded,
-                        },
-                    }
-                )
-            elif file.mime_type == "text/plain":
-                text_content = file.content.decode("utf-8")
-                content.append(
-                    {
-                        "type": "text",
-                        "text": f"\n\n--- Attached File: {file.filename or 'unnamed'} ---\n{text_content}",
-                    }
-                )
-            # Add more types as needed or silently skip unsupported ones
-
-        return content
