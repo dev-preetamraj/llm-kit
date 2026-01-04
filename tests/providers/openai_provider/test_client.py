@@ -24,7 +24,7 @@ async def test_generate_text_without_files(mock_openai_client):
     mock_instance = mock_openai_client.return_value
     mock_instance.chat.completions.create.return_value = mock_response
 
-    client = OpenAIClient(OpenAIConfig(api_key="fake-key"))
+    client = OpenAIClient(OpenAIConfig(api_key="fake-key", model="gpt-4o"))
     result = await client.generate_text("Say hello")
 
     assert result == "Hello world"
@@ -48,7 +48,7 @@ async def test_generate_text_with_image_file(mock_openai_client):
     mock_instance = mock_openai_client.return_value
     mock_instance.chat.completions.create.return_value = mock_response
 
-    client = OpenAIClient(OpenAIConfig(api_key="fake-key"))
+    client = OpenAIClient(OpenAIConfig(api_key="fake-key", model="gpt-4o"))
     result = await client.generate_text(
         "What is this?",
         files=[fake_image],
@@ -81,7 +81,7 @@ async def test_generate_json(mock_openai_client):
     mock_instance = mock_openai_client.return_value
     mock_instance.beta.chat.completions.parse.return_value = mock_response
 
-    client = OpenAIClient(OpenAIConfig(api_key="fake-key"))
+    client = OpenAIClient(OpenAIConfig(api_key="fake-key", model="gpt-4o"))
     result = await client.generate_json(
         prompt="Extract amount",
         schema=AmountSchema,

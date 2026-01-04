@@ -23,7 +23,7 @@ async def test_generate_text_without_files():
         "_create_client",
         return_value=mock_client,
     ):
-        client = GeminiClient(GeminiConfig(api_key="fake-key"))
+        client = GeminiClient(GeminiConfig(api_key="fake-key", model="gemini-1.5-pro"))
 
         result = await client.generate_text("Say hello")
 
@@ -56,7 +56,7 @@ async def test_generate_text_with_file():
         "_create_client",
         return_value=mock_client,
     ):
-        client = GeminiClient(GeminiConfig(api_key="fake-key"))
+        client = GeminiClient(GeminiConfig(api_key="fake-key", model="gemini-1.5-pro"))
 
         result = await client.generate_text(
             "Summarize this bill",
@@ -86,7 +86,7 @@ async def test_generate_json():
         "_create_client",
         return_value=mock_client,
     ):
-        client = GeminiClient(GeminiConfig(api_key="fake-key"))
+        client = GeminiClient(GeminiConfig(api_key="fake-key", model="gemini-1.5-pro"))
 
         result = await client.generate_json(
             prompt="Extract amount",

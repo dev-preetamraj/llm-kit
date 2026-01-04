@@ -23,7 +23,9 @@ async def test_generate_text_without_files(mock_anthropic_client):
     mock_instance = mock_anthropic_client.return_value
     mock_instance.messages.create = AsyncMock(return_value=mock_response)
 
-    client = AnthropicClient(AnthropicConfig(api_key="fake-key"))
+    client = AnthropicClient(
+        AnthropicConfig(api_key="fake-key", model="claude-3-5-sonnet-20241022")
+    )
     result = await client.generate_text("Say hello")
 
     assert result == "Hello world"
@@ -48,7 +50,9 @@ async def test_generate_text_with_image_file(mock_anthropic_client):
     mock_instance = mock_anthropic_client.return_value
     mock_instance.messages.create = AsyncMock(return_value=mock_response)
 
-    client = AnthropicClient(AnthropicConfig(api_key="fake-key"))
+    client = AnthropicClient(
+        AnthropicConfig(api_key="fake-key", model="claude-3-5-sonnet-20241022")
+    )
     result = await client.generate_text(
         "What is this?",
         files=[fake_image],
@@ -84,7 +88,9 @@ async def test_generate_json(mock_anthropic_client):
     mock_instance = mock_anthropic_client.return_value
     mock_instance.messages.create = AsyncMock(return_value=mock_response)
 
-    client = AnthropicClient(AnthropicConfig(api_key="fake-key"))
+    client = AnthropicClient(
+        AnthropicConfig(api_key="fake-key", model="claude-3-5-sonnet-20241022")
+    )
     result = await client.generate_json(
         prompt="Extract amount",
         schema=AmountSchema,

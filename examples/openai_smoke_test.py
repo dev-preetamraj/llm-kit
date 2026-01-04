@@ -126,7 +126,9 @@ class StrategyRunner:
 
 
 async def main():
-    client = OpenAIClient(OpenAIConfig(api_key=settings.OEPNAI_API_KEY))
+    client = OpenAIClient(
+        OpenAIConfig(api_key=settings.OEPNAI_API_KEY, model="gpt-4o-mini")
+    )
 
     strategies = [
         GenerateTextWithoutFileStrategy(),

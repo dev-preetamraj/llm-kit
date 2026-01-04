@@ -127,7 +127,9 @@ class StrategyRunner:
 
 
 async def main():
-    client = GeminiClient(GeminiConfig(api_key=settings.GEMINI_API_KEY))
+    client = GeminiClient(
+        GeminiConfig(api_key=settings.GEMINI_API_KEY, model="gemini-2.5-flash")
+    )
 
     strategies = [
         GenerateTextWithoutFileStrategy(),
