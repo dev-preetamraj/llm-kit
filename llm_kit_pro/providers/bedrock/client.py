@@ -13,8 +13,8 @@ except ImportError as e:
     ) from e
 
 from llm_kit_pro.core.base import BaseLLMClient
+from llm_kit_pro.core.helpers import extract_json
 from llm_kit_pro.core.inputs import LLMFile
-from llm_kit_pro.core.json_utils import extract_json
 from llm_kit_pro.providers.bedrock.adapters.claude import ClaudeAdapter
 from llm_kit_pro.providers.bedrock.config import BedrockConfig
 

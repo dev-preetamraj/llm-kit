@@ -14,6 +14,7 @@ It is designed for developers who need to switch between providers (OpenAI, Gemi
 - **Multimodal Inputs**: First-class support for PDF, PNG, JPEG, and Text files across all supported providers.
 - **Async-First**: Built from the ground up for high-performance asynchronous Python applications.
 - **Provider-Agnostic Inputs**: Use `LLMFile` to handle different file types without worrying about provider-specific formatting.
+- **Universal File Loader**: Load files from local paths or URLs with automatic MIME type detection.
 
 ---
 
@@ -88,7 +89,7 @@ print(data["rating"])
 `llm-kit-pro` treats files as first-class citizens. You can pass images or PDFs directly to the model.
 
 ```python
-from llm_kit_pro.core.inputs import LLMFile
+from llm_kit_pro.core.helpers import load_file
 from pydantic import BaseModel
 
 class Invoice(BaseModel):
@@ -96,13 +97,9 @@ class Invoice(BaseModel):
     amount: float
     due_date: str
 
-# Load your file
-with open("invoice.pdf", "rb") as f:
-    pdf = LLMFile(
-        content=f.read(),
-        mime_type="application/pdf",
-        filename="invoice.pdf"
-    )
+# Load your file (from local path or URL)
+pdf = load_file("invoice.pdf")
+# Or from URL: pdf = await load_file_async("https://example.com/invoice.pdf")
 
 # Extract structured data from the document
 data = await client.generate_json(
@@ -130,6 +127,17 @@ A simple container for file-based inputs.
 - `content`: Raw bytes.
 - `mime_type`: e.g., `application/pdf`, `image/jpeg`.
 - `filename`: Optional metadata.
+
+### File Loading Helpers
+
+Utilities to load files from local paths or URLs:
+
+- `load_file(source)` -> `LLMFile` - Universal loader (auto-detects local vs URL)
+- `load_file_async(source)` -> `LLMFile` - Async version
+- `load_file_from_path(path)` -> `LLMFile` - Load from local filesystem
+- `load_file_from_url(url)` -> `LLMFile` - Download from URL
+
+See [File Loader Guide](docs/FILE_LOADER_GUIDE.md) for detailed documentation.
 
 ---
 

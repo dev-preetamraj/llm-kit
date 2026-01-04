@@ -5,6 +5,7 @@ from typing import Any, Dict, List
 
 from pydantic import BaseModel
 
+from llm_kit_pro.core.helpers import load_file
 from llm_kit_pro.core.inputs import LLMFile
 from llm_kit_pro.providers.anthropic.client import AnthropicClient
 from llm_kit_pro.providers.anthropic.config import AnthropicConfig
@@ -59,12 +60,8 @@ class GenerateTextWithFileStrategy(TestStrategy):
 
     async def execute(self, client: AnthropicClient) -> str:
         bill_path = Path(__file__).parent.parent / "bill.pdf"
-        with open(bill_path, "rb") as f:
-            bill_content = f.read()
-
-        bill_file = LLMFile(
-            content=bill_content, mime_type="application/pdf", filename="bill.pdf"
-        )
+        # Using the new load_file helper
+        bill_file = load_file(bill_path)
         return await client.generate_text(
             "Summarize this bill in one sentence", files=[bill_file]
         )
@@ -90,12 +87,8 @@ class GenerateJsonWithFileStrategy(TestStrategy):
 
     async def execute(self, client: AnthropicClient) -> Dict[str, Any]:
         bill_path = Path(__file__).parent.parent / "bill.pdf"
-        with open(bill_path, "rb") as f:
-            bill_content = f.read()
-
-        bill_file = LLMFile(
-            content=bill_content, mime_type="application/pdf", filename="bill.pdf"
-        )
+        # Using the new load_file helper
+        bill_file = load_file(bill_path)
         return await client.generate_json(
             "Extract the billing information from this document",
             schema=BillExtractionSchema,

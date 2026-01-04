@@ -21,6 +21,19 @@ Core
    :undoc-members:
    :show-inheritance:
 
+Helpers
+-------
+
+.. automodule:: llm_kit_pro.core.helpers.file_url_to_llm_file
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+.. automodule:: llm_kit_pro.core.helpers.json
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Providers
 ---------
 

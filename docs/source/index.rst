@@ -11,6 +11,7 @@
    :caption: Contents:
 
    api
+   file_loader
    contributing
 
 
