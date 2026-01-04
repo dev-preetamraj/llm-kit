@@ -8,7 +8,7 @@ It is designed for developers who need to switch between providers (OpenAI, Gemi
 
 ## ✨ Features
 
-- **Unified API**: One interface for OpenAI, Gemini, and AWS Bedrock.
+- **Unified API**: One interface for OpenAI, Gemini, Anthropic, and AWS Bedrock.
 - **Pydantic-First Structured Output**: Pass Pydantic models directly to get validated, type-safe dictionaries back.
 - **Native "Strict Mode"**: Automatically handles OpenAI's Structured Outputs requirements.
 - **Multimodal Inputs**: First-class support for PDF, PNG, JPEG, and Text files across all supported providers.
@@ -31,6 +31,9 @@ pip install "llm-kit-pro[openai]"
 
 # For Google Gemini
 pip install "llm-kit-pro[gemini]"
+
+# For Anthropic
+pip install "llm-kit-pro[anthropic]"
 
 # For AWS Bedrock (Anthropic/Llama/etc)
 pip install "llm-kit-pro[bedrock]"
@@ -130,12 +133,12 @@ A simple container for file-based inputs.
 
 ## 🔌 Supported Providers
 
-| Provider          | Installation Extra | Status     | Structured Output  | Multimodal           |
-| :---------------- | :----------------- | :--------- | :----------------- | :------------------- |
-| **OpenAI**        | `[openai]`         | ✅ Stable  | Native Strict Mode | Images               |
-| **Google Gemini** | `[gemini]`         | ✅ Stable  | Native JSON Schema | Images, PDF          |
-| **AWS Bedrock**   | `[bedrock]`        | ✅ Stable  | Schema Injection   | Images, PDF (Claude) |
-| **Anthropic**     | `[anthropic]`      | 🏗️ Planned | -                  | -                    |
+| Provider          | Installation Extra | Status    | Structured Output  | Multimodal           |
+| :---------------- | :----------------- | :-------- | :----------------- | :------------------- |
+| **OpenAI**        | `[openai]`         | ✅ Stable | Native Strict Mode | Images               |
+| **Google Gemini** | `[gemini]`         | ✅ Stable | Native JSON Schema | Images, PDF          |
+| **Anthropic**     | `[anthropic]`      | ✅ Stable | Native Tool Use    | Images, PDF          |
+| **AWS Bedrock**   | `[bedrock]`        | ✅ Stable | Schema Injection   | Images, PDF (Claude) |
 
 ---
 
@@ -143,7 +146,7 @@ A simple container for file-based inputs.
 
 🚧 **Under active development**
 
-The public API is stabilizing. We are currently focusing on adding more Bedrock adapters (Llama 3, Titan) and a native Anthropic provider.
+The public API is stabilizing. We are currently focusing on adding more Bedrock adapters (Llama 3, Titan).
 
 ---
 

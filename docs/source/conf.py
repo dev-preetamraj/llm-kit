@@ -3,10 +3,12 @@ import sys
 
 sys.path.insert(0, os.path.abspath("../.."))
 
+from llm_kit_pro.version import __version__
+
 project = "llm-kit-pro"
 copyright = "2026, Preetam Raj"
 author = "Preetam Raj"
-release = "0.3.0"
+release = __version__
 
 # -- General configuration ---------------------------------------------------
 

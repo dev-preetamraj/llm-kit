@@ -3,9 +3,6 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-llm-kit-pro
-===========
-
 .. include:: ../../README.md
    :parser: myst_parser.sphinx_
 
@@ -13,10 +10,7 @@ llm-kit-pro
    :maxdepth: 2
    :caption: Contents:
 
-Indices and tables
-==================
+   api
+   contributing
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
 
