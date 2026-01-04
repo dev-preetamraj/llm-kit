@@ -260,11 +260,11 @@ from llm_kit_pro.providers.openai import OpenAIClient, OpenAIConfig
 document = load_file("report.pdf")
 
 # Use with Anthropic
-anthropic = AnthropicClient(AnthropicConfig(api_key="..."))
+anthropic = AnthropicClient(AnthropicConfig(api_key="...", model="claude-sonnet-4-5-20250929"))
 result1 = await anthropic.generate_text("Summarize", files=[document])
 
 # Use with OpenAI
-openai = OpenAIClient(OpenAIConfig(api_key="..."))
+openai = OpenAIClient(OpenAIConfig(api_key="...", model="gpt-4o-mini"))
 result2 = await openai.generate_text("Summarize", files=[document])
 ```
 
@@ -392,7 +392,7 @@ from llm_kit_pro.providers.anthropic import AnthropicClient, AnthropicConfig
 invoice = load_file("invoice.pdf")
 
 # Extract information
-client = AnthropicClient(AnthropicConfig(api_key="..."))
+client = AnthropicClient(AnthropicConfig(api_key="...", model="claude-sonnet-4-5-20250929"))
 data = await client.generate_json(
     "Extract invoice details",
     schema=InvoiceSchema,

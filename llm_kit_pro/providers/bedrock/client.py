@@ -20,6 +20,23 @@ from llm_kit_pro.providers.bedrock.config import BedrockConfig
 
 
 class BedrockClient(BaseLLMClient):
+    """
+    AWS Bedrock LLM client implementation.
+
+    Args:
+        config: BedrockConfig instance with access_key, secret_key, region, and model (all required).
+
+    Example:
+        >>> from llm_kit_pro.providers.bedrock import BedrockClient
+        >>> from llm_kit_pro.providers.bedrock.config import BedrockConfig
+        >>> client = BedrockClient(BedrockConfig(
+        ...     access_key="your-access-key",
+        ...     secret_key="your-secret-key",
+        ...     region="us-east-1",
+        ...     model="global.anthropic.claude-sonnet-4-5-20250929-v1:0"
+        ... ))
+    """
+
     def __init__(self, config: BedrockConfig):
         self.config = config
         self._runtime = boto3.client(

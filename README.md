@@ -50,7 +50,10 @@ pip install "llm-kit-pro[bedrock]"
 from llm_kit_pro.providers.openai import OpenAIClient
 from llm_kit_pro.providers.openai.config import OpenAIConfig
 
-client = OpenAIClient(OpenAIConfig(api_key="your-key"))
+client = OpenAIClient(OpenAIConfig(
+    api_key="your-key",
+    model="gpt-4o-mini"
+))
 
 text = await client.generate_text(
     prompt="Explain quantum entanglement like I'm five."
@@ -73,7 +76,10 @@ class MovieReview(BaseModel):
     summary: str
     sentiment: str
 
-client = GeminiClient(GeminiConfig(api_key="your-key"))
+client = GeminiClient(GeminiConfig(
+    api_key="your-key",
+    model="gemini-2.5-flash"
+))
 
 # Pass the class directly!
 data = await client.generate_json(

@@ -4,6 +4,15 @@ from pydantic import BaseModel, Field
 
 
 class AnthropicConfig(BaseModel):
+    """
+    Configuration for Anthropic Claude client.
+
+    Attributes:
+        api_key: Anthropic API key (required)
+        model: Claude model identifier (required), e.g., "claude-sonnet-4-5-20250929", "claude-3-5-sonnet-20241022"
+        temperature: Sampling temperature for generation (default: 0.2)
+    """
+
     api_key: str = Field(..., description="Anthropic API key")
     model: str = Field(..., description="Anthropic model to use")
     temperature: float = Field(default=0.2)

@@ -19,6 +19,18 @@ except ImportError as e:
 
 
 class OpenAIClient(BaseLLMClient):
+    """
+    OpenAI LLM client implementation.
+
+    Args:
+        config: OpenAIConfig instance with api_key and model (required).
+
+    Example:
+        >>> from llm_kit_pro.providers.openai import OpenAIClient
+        >>> from llm_kit_pro.providers.openai.config import OpenAIConfig
+        >>> client = OpenAIClient(OpenAIConfig(api_key="your-key", model="gpt-4o-mini"))
+    """
+
     def __init__(self, config: OpenAIConfig):
         self.config = config
         self._client = self._create_client()

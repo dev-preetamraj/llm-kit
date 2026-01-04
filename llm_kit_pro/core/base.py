@@ -28,7 +28,8 @@ class BaseLLMClient(ABC):
         Args:
             prompt: User prompt / instruction.
             files: Optional list of attached files (PDF, image, etc.).
-            **kwargs: Provider-specific options (model, temperature, etc.).
+            **kwargs: Provider-specific options (temperature, max_tokens, etc.).
+                     Note: The model is typically set in the config during client initialization.
 
         Returns:
             Generated text.
@@ -51,7 +52,8 @@ class BaseLLMClient(ABC):
             prompt: User prompt / instruction.
             schema: Pydantic model class describing expected output.
             files: Optional list of attached files (PDF, image, etc.).
-            **kwargs: Provider-specific options (model, temperature, etc.).
+            **kwargs: Provider-specific options (temperature, max_tokens, etc.).
+                     Note: The model is typically set in the config during client initialization.
 
         Returns:
             Validated JSON output as a dictionary.

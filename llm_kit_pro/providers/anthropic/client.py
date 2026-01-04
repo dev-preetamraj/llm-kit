@@ -18,6 +18,18 @@ except ImportError as e:
 
 
 class AnthropicClient(BaseLLMClient):
+    """
+    Anthropic Claude LLM client implementation.
+
+    Args:
+        config: AnthropicConfig instance with api_key and model (required).
+
+    Example:
+        >>> from llm_kit_pro.providers.anthropic import AnthropicClient
+        >>> from llm_kit_pro.providers.anthropic.config import AnthropicConfig
+        >>> client = AnthropicClient(AnthropicConfig(api_key="your-key", model="claude-sonnet-4-5-20250929"))
+    """
+
     def __init__(self, config: AnthropicConfig):
         self.config = config
         self._client = anthropic.AsyncAnthropic(api_key=self.config.api_key)

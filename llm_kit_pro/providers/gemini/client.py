@@ -19,6 +19,18 @@ except ImportError as e:
 
 
 class GeminiClient(BaseLLMClient):
+    """
+    Google Gemini LLM client implementation.
+
+    Args:
+        config: GeminiConfig instance with api_key and model (required).
+
+    Example:
+        >>> from llm_kit_pro.providers.gemini import GeminiClient
+        >>> from llm_kit_pro.providers.gemini.config import GeminiConfig
+        >>> client = GeminiClient(GeminiConfig(api_key="your-key", model="gemini-2.5-flash"))
+    """
+
     def __init__(self, config: GeminiConfig):
         self.config = config
         self._client = self._create_client()
