@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "llm-kit-pro"
-version = "0.4.1"
+version = "0.4.2"
 description = "A unified toolkit for working with multiple LLM providers"
 authors = ["Preetam Raj"]
 license = "MIT"
@@ -20,7 +20,7 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = "^3.11"
-pydantic = "^2.12.5"
+pydantic = ">=2.0,<2.13"
 pydantic-settings = "^2.12.0"
 httpx = ">=0.28.1"
 openai = { version = "^2.14.0", optional = true }
