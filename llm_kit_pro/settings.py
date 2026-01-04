@@ -6,6 +6,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     GEMINI_API_KEY: str | None = None
     OEPNAI_API_KEY: str | None = None
+    ANTHROPIC_API_KEY: str | None = None
     AWS_ACCESS_KEY: str | None = None
     AWS_SECRET_KEY: str | None = None
     AWS_REGION: str | None = None
